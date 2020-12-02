@@ -1,90 +1,82 @@
 package com.beirtipol.assertjdemo.ui;
 
 import org.assertj.swing.core.GenericTypeMatcher;
-import org.assertj.swing.finder.FrameFinder;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.DialogFixture;
 import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.fixture.JMenuItemFixture;
 import org.assertj.swing.fixture.JPanelFixture;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.assertj.swing.launcher.ApplicationLauncher;
-import org.assertj.swing.timing.Pause;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
 
 public class LogonTest extends AssertJSwingJUnitTestCase {
+
+    private FrameFixture mainFrame;
+    private JPanelFixture detailPanel;
+
     @Override
     protected void onSetUp() {
 
     }
 
+    @Before
+    public void setup(){
+        startApp();
+        mainFrame = getMainFrame();
+        detailPanel = findDetailPanel(mainFrame);
+    }
+
     @Test
     public void testLogonWithInvalidPassword(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "admin", "incorrect password");
 
         logonDialog.requireVisible();
         logonDialog.label("info").requireText("Invalid Username/Password");
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
     }
 
     @Test
     public void testLogonWithCorrectPassword(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "admin", "password");
 
         logonDialog.requireNotVisible();
-        findDetailPanel(mainFrame).requireVisible();
-        JPanelFixture detailPanel = findDetailPanel(mainFrame);
+        detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("admin");
     }
 
-    // test - successful login, successful login: second user is current user
     @Test
     public void testLogonTwoSuccesses(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "password1");
 
         logonDialog.requireNotVisible();
-        findDetailPanel(mainFrame).requireVisible();
-        JPanelFixture detailPanel = findDetailPanel(mainFrame);
+        detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test1");
 
         openLogonDialog(mainFrame);
         attemptLogon(logonDialog, "test2", "password2");
 
         logonDialog.requireNotVisible();
-        findDetailPanel(mainFrame).requireVisible();
+        detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test2");
     }
 
-    // test - success, fail: first user is current user
     @Test
     public void testLogonSuccessFail(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "password1");
 
         logonDialog.requireNotVisible();
-        findDetailPanel(mainFrame).requireVisible();
-        JPanelFixture detailPanel = findDetailPanel(mainFrame);
+        detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test1");
 
         openLogonDialog(mainFrame);
@@ -92,81 +84,64 @@ public class LogonTest extends AssertJSwingJUnitTestCase {
 
         logonDialog.label("info").requireText("Invalid Username/Password");
         logonDialog.requireVisible();
-        findDetailPanel(mainFrame).requireVisible();
+        detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test1");
     }
 
-    // test - fail, success: log in successfully
     @Test
     public void testLogonFailSuccess(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "wrong password");
 
         logonDialog.requireVisible();
         logonDialog.label("info").requireText("Invalid Username/Password");
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
 
         attemptLogon(logonDialog, "test2", "password2");
 
         logonDialog.requireNotVisible();
-        JPanelFixture detailPanel = findDetailPanel(mainFrame);
         detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test2");
     }
 
     @Test
     public void testLogonFailCloseDialogSuccess(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "wrong password");
 
         logonDialog.requireVisible();
         logonDialog.label("info").requireText("Invalid Username/Password");
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
 
         logonDialog.close();
-
         openLogonDialog(mainFrame);
-        logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test2", "password2");
 
         logonDialog.requireNotVisible();
-        JPanelFixture detailPanel = findDetailPanel(mainFrame);
         detailPanel.requireVisible();
         detailPanel.label("currentUser").requireText("test2");
     }
 
     @Test
     public void testLogOnLogOff(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "password1");
         logOff(mainFrame);
 
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
     }
 
     @Test
     public void testLogOnLogOffLogOnSameUser(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "password1");
         logOff(mainFrame);
 
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
 
         openLogonDialog(mainFrame);
 
@@ -174,19 +149,20 @@ public class LogonTest extends AssertJSwingJUnitTestCase {
         logonDialog.textBox("password").requireText("");
 
         attemptLogon(logonDialog, "test1", "password1");
+
+        logonDialog.requireNotVisible();
+        detailPanel.requireVisible();
+        detailPanel.label("currentUser").requireText("test1");
     }
 
     @Test
     public void testLogOnLogOffLogOnDifferentUser(){
-        startApp();
-        FrameFixture mainFrame = getMainFrame();
-
         openLogonDialog(mainFrame);
         DialogFixture logonDialog = WindowFinder.findDialog(LogonDialog.class).using(robot());
         attemptLogon(logonDialog, "test1", "password1");
         logOff(mainFrame);
 
-        findDetailPanel(mainFrame).requireNotVisible();
+        detailPanel.requireNotVisible();
 
         openLogonDialog(mainFrame);
 
@@ -194,6 +170,10 @@ public class LogonTest extends AssertJSwingJUnitTestCase {
         logonDialog.textBox("password").requireText("");
 
         attemptLogon(logonDialog, "test2", "password2");
+
+        logonDialog.requireNotVisible();
+        detailPanel.requireVisible();
+        detailPanel.label("currentUser").requireText("test2");
     }
 
     private JPanelFixture findDetailPanel(FrameFixture mainFrame) {

@@ -18,6 +18,7 @@ public class LogonDialog extends JDialog {
         if (b) {
             userText.setText("");
             passwordText.setText("");
+            infoLabel.setText("");
         }
         super.setVisible(b);
     }

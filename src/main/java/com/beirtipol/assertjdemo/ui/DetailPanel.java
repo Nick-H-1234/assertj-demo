@@ -5,8 +5,6 @@ import com.beirtipol.assertjdemo.model.User;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
 public class DetailPanel extends JPanel {
@@ -89,7 +87,11 @@ public class DetailPanel extends JPanel {
                 currentUser.setAddress(address);
                 changesMade = true;
             }
-            if (changesMade) {saveStatus.setText("Changes saved!");}
+            if (changesMade) {
+                saveStatus.setText("Changes saved!");
+            } else {
+                saveStatus.setText("Nothing to save!");
+            }
         });
 
         revalidate();
