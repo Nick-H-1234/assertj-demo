@@ -10,6 +10,17 @@ public class LogonDialog extends JDialog {
 
     private final UserController userController;
     private       JLabel         infoLabel;
+    private JTextField userText;
+    private JPasswordField passwordText;
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            userText.setText("");
+            passwordText.setText("");
+        }
+        super.setVisible(b);
+    }
 
     public LogonDialog(JFrame parent, UserController userController) {
         super(parent);
@@ -20,19 +31,19 @@ public class LogonDialog extends JDialog {
     private void createComponents() {
         setLayout(new MigLayout("", "[][200px]", "[][][][]"));
         add(new JLabel("Username:"), "cell 0 0");
-        final JTextField userText = new JTextField();
+        userText = new JTextField();
         userText.setName("username");
         add(userText, "cell 1 0, growx");
 
         add(new JLabel("Password:"), "cell 0 1");
-        final JPasswordField passwordText = new JPasswordField();
+        passwordText = new JPasswordField();
         passwordText.setName("password");
         add(passwordText, "cell 1 1, growx");
 
         JButton logonButton = new JButton("Logon");
         logonButton.setName("logon");
         logonButton.addActionListener(e -> {
-            boolean success = userController.logon(new User(userText.getText(), new String(passwordText.getPassword())));
+            boolean success = userController.logon(new User(userText.getText(), new String(passwordText.getPassword()),""));
             if (!success) {
                 infoLabel.setText("Invalid Username/Password");
             } else {

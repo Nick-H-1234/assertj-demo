@@ -29,7 +29,7 @@ public class MainFrame extends JFrame {
     private void createComponents() {
         setLayout(new MigLayout("fill"));
         createMenu();
-        detailPanel = new DetailPanel();
+        detailPanel = new DetailPanel(userController);
         detailPanel.setVisible(false);
         add(detailPanel, "cell 0 0, grow");
         pack();
@@ -42,6 +42,12 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 getLogonDialog().setVisible(true);
+            }
+        }));
+        fileMenu.add(new JMenuItem(new AbstractAction("Logoff") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userController.logoff();
             }
         }));
         getJMenuBar().add(fileMenu);

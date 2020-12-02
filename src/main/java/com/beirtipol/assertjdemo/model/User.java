@@ -1,8 +1,6 @@
 package com.beirtipol.assertjdemo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -10,4 +8,5 @@ import lombok.EqualsAndHashCode;
 public class User {
     private String username;
     private String password;
+    private String address;
 }
